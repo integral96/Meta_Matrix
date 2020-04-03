@@ -53,6 +53,7 @@ public:
     constexpr size_t size(const size_t rank) const;
     void fill(T&& val);
     void push_t(const T& val);
+    void sortir();
     void swap(array2d& other) noexcept;
 public:
     const_iterator cbegin() const { return arr.cbegin(); }
@@ -105,6 +106,16 @@ void array2d<T, R, C, Cont>::fill(T&& val) {
 template<typename T, size_t R, size_t C, template<typename> class Cont>
 void array2d<T, R, C, Cont>::push_t(const T& val) {
     arr.insert(arr.begin(), val);
+}
+template<typename T, size_t R, size_t C, template<typename> class Cont>
+void array2d<T, R, C, Cont>::sortir() {
+    for (size_t i = 0; i < size(1) - 1; i++) {
+        for (size_t j = i + 1; j < size(2); j++)
+            {
+                std::swap(arr.at(i*size(1) + j), arr.at(j*size(2) + i));
+            }
+    }
+//    std::make_heap(arr.begin(), arr.end());
 }
 template<typename T, size_t R, size_t C, template<typename> class Cont>
 void array2d<T, R, C, Cont>::swap(array2d& other) noexcept {
