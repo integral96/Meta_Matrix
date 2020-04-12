@@ -27,7 +27,7 @@ int main() {
     grp.add_edge('A', 'F', 8);
     grp.add_edge('B', 'C', 23);
     grp.add_edge('B', 'D', 5);
-    grp.init_adj_matr();
+    grp.init_vec();
     std::cout << grp << std::endl;
 
 	return 0;

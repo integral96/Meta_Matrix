@@ -28,18 +28,13 @@ bool operator == (const node_type<Vertex, Weight>& left, const node_type<Vertex,
     return (left.first == right.first && left.second.first == right.second.first
             && left.second.second == right.second.second);
 }
-
-namespace boost {
-    template<typename Vertex, typename Weight>
-    struct hash<node_type<Vertex, Weight>> {
-        size_t operator() (const node_type<Vertex, Weight>& pair) const {
-            size_t hash = 0;
-                boost::hash_combine(hash, boost::hash_value(pair.first));
-                boost::hash_combine(hash, boost::hash_value(pair.second.first));
-                boost::hash_combine(hash, boost::hash_value(pair.second.second));
-            return hash;
-        }
-    };
+template<typename Vertex, typename Weight>
+size_t hash_value (const node_type<Vertex, Weight>& pair) {
+    size_t hash = 0;
+        boost::hash_combine(hash, boost::hash_value(pair.first));
+        boost::hash_combine(hash, boost::hash_value(pair.second.first));
+        boost::hash_combine(hash, boost::hash_value(pair.second.second));
+    return hash;
 }
 
 template<typename Vertex, typename Weight>
