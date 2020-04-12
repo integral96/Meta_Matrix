@@ -24,6 +24,8 @@ class array2d
 {
 public:
     using value_type = T;
+    static const size_t value_R = R;
+    static const size_t value_C = C;
 private:
     using iterator = boost::container::stable_vector_iterator<T*, true>;
     using const_iterator = const boost::container::stable_vector_iterator<T*, true>;

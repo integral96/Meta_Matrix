@@ -13,6 +13,7 @@
 #include <cassert>
 #include <limits>
 #include <algorithm>
+#include <complex>
 
 #include <array2d.hpp>
 #include <matrix_mult.hpp>
@@ -21,7 +22,15 @@ template <size_t N = 3, size_t M = 3>
     using my_matrix = array2d<size_t, N, M, std::vector>;
 
 template<typename Vertex, typename Weight>
-using node_type = std::pair<Vertex, std::pair<Vertex, Weight> >;
+struct node_type
+{
+    using type = std::pair<Vertex, std::pair<Vertex, Weight> >;
+};
+template<typename Vertex, typename Weight>
+struct node_type<std::complex<Vertex>, std::pair<std::complex<Vertex>, Weight> >
+{
+    using type = std::pair<std::complex<Vertex>, std::pair<std::complex<Vertex>, Weight> >;
+};
 
 template<typename Vertex, typename Weight>
 bool operator == (const node_type<Vertex, Weight>& left, const node_type<Vertex, Weight>& right) {
@@ -40,8 +49,17 @@ size_t hash_value (const node_type<Vertex, Weight>& pair) {
 template<typename Vertex, typename Weight>
 struct Adjacency
 {
+    using type = Vertex;
     Vertex start;
     Vertex finish;
+    Weight weight;
+};
+template<typename Vertex, typename Weight>
+struct Adjacency<std::complex<Vertex>, Weight>
+{
+    using type = std::complex<Vertex>;
+    std::complex<Vertex> start;
+    std::complex<Vertex> finish;
     Weight weight;
 };
 
@@ -56,6 +74,7 @@ class Graph
 {
 
     private:
+        typename node_type<Vertex, Weight>::type tmp;
         boost::unordered_set<node_type<Vertex, Weight>> m_graph;
         array2d<Weight, N, M, boost::container::vector> adjacency_matrix;
         boost::bimap<Vertex, Weight> neighbor_path;
@@ -65,6 +84,7 @@ class Graph
         constexpr static Weight _inf = std::numeric_limits<Weight>::infinity();
         using by_start_ver = typename boost::multi_index::ordered_non_unique<boost::multi_index::member<Adjacency<Vertex, Weight>,
                         Vertex, &Adjacency<Vertex, Weight>::start>>;
+
         using by_finish_ver = typename boost::multi_index::ordered_non_unique<boost::multi_index::member<Adjacency<Vertex, Weight>,
                         Vertex, &Adjacency<Vertex, Weight>::finish>>;
         using graph_t = typename boost::multi_index::multi_index_container<Adjacency<Vertex, Weight>,
@@ -72,7 +92,7 @@ class Graph
         boost::container::vector<Adjacency<Vertex, Weight> > vec_rtt;
                     graph_t graph_index;
     public:
-        Graph(){}
+        Graph() {}
         ~Graph(){}
 
         void add_edge(Vertex const& start, Vertex const& finish, const Weight& weight)
