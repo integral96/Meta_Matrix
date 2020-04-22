@@ -7,6 +7,35 @@
 
 #include <array2d.hpp>
 
+template <typename Matrix>
+class transposed_view;
+template<typename Matrix>
+std::ostream& operator << (std::ostream&, const transposed_view<Matrix>&);
+
+template <typename Matrix>
+class transposed_view
+{
+private:
+    Matrix& ref;
+public:
+    using value_type = typename Matrix::value_type;
+    using size_type  = typename Matrix::size_type;
+    explicit transposed_view(Matrix& A): ref(A) {}
+    value_type& operator()(size_type r, size_type c) { return ref(c, r); }
+    const value_type& operator()(size_type r, size_type c) const { return ref(c, r); }
+    friend std::ostream& operator << <Matrix> (std::ostream&, const transposed_view<Matrix>&);
+};
+template<typename Matrix>
+std::ostream& operator << (std::ostream& oss, const transposed_view<Matrix>& matrix) {
+    for (size_t i = 0; i < matrix.ref.size(1); i++) {
+        for (size_t j = 0; j < matrix.ref.size(2); j++)
+            {
+                oss << std::setw(6) << std::setprecision(3) << matrix.ref.at(j, i) << "\t";
+            }
+            oss << std::endl;
+    }
+    return oss;
+}
 template <typename T, size_t N, size_t M, typename Func>
 class Hyperbolic_equation
 {
@@ -29,6 +58,6 @@ public:
                 matx_u(i, j + 1) = matx_u(i - 1, j) + matx_u(i + 1, j) - matx_u(i, j - 1);
             }
         }
-        std::cout << matx_u << std::endl;
+        std::cout << transposed_view<array2d<T, N + 1, M + 1, boost::container::vector>>(matx_u) << std::endl;
     }
 };

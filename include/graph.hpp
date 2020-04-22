@@ -10,6 +10,7 @@
 #include <boost/bimap.hpp>
 #include <boost/assign.hpp>
 #include <boost/functional/hash.hpp>
+#include <boost/mpl/or.hpp>
 #include <cassert>
 #include <limits>
 #include <algorithm>
@@ -21,15 +22,22 @@
 template <size_t N = 3, size_t M = 3>
     using my_matrix = array2d<size_t, N, M, std::vector>;
 
+template<typename T>
+struct Magnitude
+{
+    using type = T;
+};
+
+template<typename T>
+struct Magnitude<std::complex<T>>
+{
+    using type = T;
+};
+
 template<typename Vertex, typename Weight>
 struct node_type
 {
-    using type = std::pair<Vertex, std::pair<Vertex, Weight> >;
-};
-template<typename Vertex, typename Weight>
-struct node_type<std::complex<Vertex>, std::pair<std::complex<Vertex>, Weight> >
-{
-    using type = std::pair<std::complex<Vertex>, std::pair<std::complex<Vertex>, Weight> >;
+    using type = std::pair<typename Magnitude<Vertex>::type, std::pair<typename Magnitude<Vertex>::type, Weight> >;
 };
 
 template<typename Vertex, typename Weight>
@@ -49,17 +57,8 @@ size_t hash_value (const node_type<Vertex, Weight>& pair) {
 template<typename Vertex, typename Weight>
 struct Adjacency
 {
-    using type = Vertex;
-    Vertex start;
-    Vertex finish;
-    Weight weight;
-};
-template<typename Vertex, typename Weight>
-struct Adjacency<std::complex<Vertex>, Weight>
-{
-    using type = std::complex<Vertex>;
-    std::complex<Vertex> start;
-    std::complex<Vertex> finish;
+    typename Magnitude<Vertex>::type start;
+    typename Magnitude<Vertex>::type finish;
     Weight weight;
 };
 
@@ -74,19 +73,18 @@ class Graph
 {
 
     private:
-        typename node_type<Vertex, Weight>::type tmp;
         boost::unordered_set<node_type<Vertex, Weight>> m_graph;
         array2d<Weight, N, M, boost::container::vector> adjacency_matrix;
-        boost::bimap<Vertex, Weight> neighbor_path;
-        boost::bimap<Vertex, Vertex> previos_neighbor;
+        boost::bimap<typename Magnitude<Vertex>::type, Weight> neighbor_path;
+        boost::bimap<typename Magnitude<Vertex>::type, typename Magnitude<Vertex>::type> previos_neighbor;
 
     public:
         constexpr static Weight _inf = std::numeric_limits<Weight>::infinity();
         using by_start_ver = typename boost::multi_index::ordered_non_unique<boost::multi_index::member<Adjacency<Vertex, Weight>,
-                        Vertex, &Adjacency<Vertex, Weight>::start>>;
+                        typename Magnitude<Vertex>::type, &Adjacency<Vertex, Weight>::start>>;
 
         using by_finish_ver = typename boost::multi_index::ordered_non_unique<boost::multi_index::member<Adjacency<Vertex, Weight>,
-                        Vertex, &Adjacency<Vertex, Weight>::finish>>;
+                        typename Magnitude<Vertex>::type, &Adjacency<Vertex, Weight>::finish>>;
         using graph_t = typename boost::multi_index::multi_index_container<Adjacency<Vertex, Weight>,
                         boost::multi_index::indexed_by<by_start_ver, by_finish_ver>>;
         boost::container::vector<Adjacency<Vertex, Weight> > vec_rtt;
@@ -95,16 +93,25 @@ class Graph
         Graph() {}
         ~Graph(){}
 
-        void add_edge(Vertex const& start, Vertex const& finish, const Weight& weight)
+        void add_edge(typename Magnitude<Vertex>::type const& start,
+                      typename Magnitude<Vertex>::type const& finish, const Weight& weight)
         {
+            if(boost::mpl::or_<boost::is_pod<Vertex>, boost::is_integral<Vertex>>::value) {
                 vec_rtt.push_back({start, start, 0});
                 vec_rtt.push_back({finish, finish, 0});
 
                 vec_rtt.push_back({start, finish, weight});
 
                 vec_rtt.push_back({finish, start, weight});
-        }
+            } else { ////???
+                vec_rtt.push_back({start, start, 0});
+                vec_rtt.push_back({finish, finish, 0});
 
+                vec_rtt.push_back({start, finish, weight});
+
+                vec_rtt.push_back({finish, start, weight});
+            }
+        }
 
         void init_vec() {
             for(const auto& x : vec_rtt) {
@@ -117,7 +124,7 @@ class Graph
                 }
                 else adjacency_matrix.push_t(y.weight);
             }
-//                adjacency_matrix.sortir();
+                adjacency_matrix.sortir();
         }
 
         void print_on(std::ostream& strm) const

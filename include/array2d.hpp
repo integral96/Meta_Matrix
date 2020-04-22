@@ -25,6 +25,7 @@ class array2d
 {
 public:
     using value_type = T;
+    using size_type  = size_t;
     static const size_t value_R = R;
     static const size_t value_C = C;
 private:
