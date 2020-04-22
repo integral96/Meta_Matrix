@@ -24,9 +24,13 @@ int main() {
 //    mtrx.print_result_thread();
 //    mtrx.print_result_async();
 
-    std::complex<int> cmpl1(1, 2);
-    std::complex<int> cmpl2(4, 3);
-//    Graph<std::complex<int>, int, 5, 5> grp0;
+    std::complex<char> cmpl1('W', 'Q');
+    std::complex<char> cmpl2('Q', 'Z');
+    Graph<std::complex<char>, int, 5, 5> grp0;
+    grp0.add_edge(cmpl1.real(), cmpl2.real(), 300);
+    grp0.add_edge(cmpl2.real(), cmpl1.real(), 700);
+    grp0.init_vec();
+    std::cout << grp0 << std::endl;
 
     Hyperbolic_equation<double, 5, 5, decltype (handler)> ret(16., .0, .0);
     ret.equation(handler);
