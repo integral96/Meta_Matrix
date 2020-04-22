@@ -9,6 +9,7 @@
 #include <vector>
 #include <cassert>
 #include <iostream>
+#include <iomanip>
 
 template <typename T>
 using EnableIfFunc = typename boost::enable_if<boost::is_convertible<T, boost::container::stable_vector<size_t>>>::type;
@@ -128,7 +129,7 @@ std::ostream& operator << (std::ostream& oss, const array2d<T, R, C, Cont>& matr
     for (size_t i = 0; i < matrix.size(1); i++) {
         for (size_t j = 0; j < matrix.size(2); j++)
             {
-                oss << matrix.at(i, j) << "\t";
+                oss << std::setw(6) << std::setprecision(3) << matrix.at(i, j) << "\t";
             }
             oss << std::endl;
     }

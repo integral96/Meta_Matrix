@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 3.12)
 
 # Set options for this project.
-project(matrix ${PROJECT_NAME})
+project(wip_graph ${PROJECT_NAME})
 
 set(SOURCES
     main.cpp)
@@ -10,6 +10,7 @@ set(HEADERS
     include/matrix_mult.hpp
     include/matrix_initialised.hpp
     include/graph.hpp
+    include/wave_equation.hpp
     include/Circuliar.hpp)
 
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/build)

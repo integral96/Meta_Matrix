@@ -1,4 +1,5 @@
 #include <matrix_initialised.hpp>
+#include <wave_equation.hpp>
 #include <graph.hpp>
 #include <Circuliar.hpp>
 #include <thread>
@@ -14,6 +15,9 @@
 
 using namespace boost::multi_index;
 
+static auto handler([](int x) {
+    return x*x*(5 - x);
+});
 
 int main() {
 //    multyplyMatrix mtrx;
@@ -22,7 +26,10 @@ int main() {
 
     std::complex<int> cmpl1(1, 2);
     std::complex<int> cmpl2(4, 3);
-    Graph<std::complex<int>, int, 5, 5> grp0;
+//    Graph<std::complex<int>, int, 5, 5> grp0;
+
+    Hyperbolic_equation<double, 5, 5, decltype (handler)> ret(16., .0, .0);
+    ret.equation(handler);
 
     Graph<char, int, 5, 5> grp;
     grp.add_edge('A', 'B', 3);
