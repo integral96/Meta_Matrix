@@ -1,3 +1,4 @@
+#include <array2d.hpp>
 #include <matrix_initialised.hpp>
 #include <wave_equation.hpp>
 #include <graph.hpp>
@@ -13,16 +14,15 @@
 #include <boost/multi_index/identity.hpp>
 #include <boost/multi_index/member.hpp>
 
-using namespace boost::multi_index;
-
 static auto handler([](int x) {
     return x*x*(5 - x);
 });
 
 int main() {
-//    multyplyMatrix mtrx;
-//    mtrx.print_result_thread();
+    multyplyMatrix mtrx;
+    mtrx.print_result_thread();
 //    mtrx.print_result_async();
+    std::vector<int> vec{2, 2, 2, 2, 2};
 
     std::complex<char> cmpl1('W', 'Q');
     std::complex<char> cmpl2('Q', 'Z');
@@ -44,6 +44,10 @@ int main() {
 
     grp.init_vec();
     std::cout << grp << std::endl;
+
+    array2d<size_t, 5, 5, std::vector>   A_5;
+    A_5.fill(2);
+    std::cout << trans(A_5) << std::endl;
 
 	return 0;
 }
