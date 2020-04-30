@@ -21,6 +21,7 @@ public:
     using value_type = typename Matrix::value_type;
     using size_type  = typename Matrix::size_type;
     explicit transposed_view(Matrix& A): ref(A) {}
+
     value_type& operator()(size_type r, size_type c) { return ref(c, r); }
     const value_type& operator()(size_type r, size_type c) const { return ref(c, r); }
     friend std::ostream& operator << <Matrix> (std::ostream&, const transposed_view<Matrix>&);
@@ -36,6 +37,12 @@ std::ostream& operator << (std::ostream& oss, const transposed_view<Matrix>& mat
     }
     return oss;
 }
+
+template<typename Matrix>
+inline transposed_view<Matrix> trans(Matrix& A) {
+    return transposed_view<Matrix>(A);
+}
+
 template <typename T, size_t N, size_t M, typename Func>
 class Hyperbolic_equation
 {

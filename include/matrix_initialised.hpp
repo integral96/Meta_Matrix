@@ -1,6 +1,7 @@
 #pragma once
 
 #define BOOST_THREAD_PROVIDES_FUTURE
+#define BOOST_BIND_GLOBAL_PLACEHOLDERS
 #include <iostream>
 #include <thread>
 #include <future>
@@ -113,7 +114,7 @@ public:
                             mtrx.A_8.init_list(*vec_8);
                             mtrx.B_8.init_list(*vec_8);
                             mtrx.C_8 = mtrx.C_8.multy(mtrx.A_8, mtrx.B_8);
-                            std::cout <<"Simple\t8x8 " << tmr.format();
+                            std::cout <<"Simple\t8x8\n" << mtrx.C_8 << "Simple\t8x8\n" << mtrx.A_8 * mtrx.B_8<< tmr.format();
                         }
                         cv.notify_all();
                     }
