@@ -24,7 +24,7 @@
 #include <boost/coroutine/all.hpp>
 #include <boost/ref.hpp>
 
-#include <matrix_mult.hpp>
+#include <array2d.hpp>
 
 using namespace boost::multi_index;
 
@@ -91,7 +91,7 @@ public:
     }
 
     void print_result_async() {
-        for(size_t i = 0; i < 5; i++) {
+        for(size_t i = 0; i < 8; i++) {
             v_future.emplace_back(boost::async(boost::bind(&multyplyMatrix::init_multiply_all_async, this, i)));
         }
         for(auto& x : v_future) {
@@ -114,7 +114,7 @@ public:
                             mtrx.A_8.init_list(*vec_8);
                             mtrx.B_8.init_list(*vec_8);
                             mtrx.C_8 = mtrx.C_8.multy(mtrx.A_8, mtrx.B_8);
-                            std::cout <<"Simple\t8x8\n" << mtrx.C_8 << "Simple\t8x8\n" << mtrx.A_8 * mtrx.B_8<< tmr.format();
+                            std::cout <<"Simple C\t8x8\n" << mtrx.C_8 << "Simple C\t8x8\n" << mtrx.A_8 * mtrx.B_8<< tmr.format();
                         }
                         cv.notify_all();
                     }
@@ -131,8 +131,8 @@ public:
                             mtrx.A_16.init_list(*vec_16);
                             mtrx.B_16.init_list(*vec_16);
 
-                            mult_siml<16, 16>(mtrx.A_16, mtrx.B_16, mtrx.C_16);
-                            std::cout <<"Simple\t16x16 " << tmr.format();
+                            mtrx.A_16*mtrx.B_16;
+                            std::cout <<"Simple C\t16x16 " << tmr.format();
                         }
                         cv.notify_all();
                     }
@@ -149,8 +149,8 @@ public:
                             mtrx.A_32.init_list(*vec_32);
                             mtrx.B_32.init_list(*vec_32);
 
-                            mult_siml<32, 32>(mtrx.A_32, mtrx.B_32, mtrx.C_32);
-                            std::cout <<"Simple\t32x32 " << tmr.format();
+                            mtrx.A_32*mtrx.B_32;
+                            std::cout <<"Simple C\t32x32 " << tmr.format();
                         }
                         cv.notify_all();
                     }
@@ -167,8 +167,8 @@ public:
                             mtrx.A_64.init_list(*vec_64);
                             mtrx.B_64.init_list(*vec_64);
 
-                            mult_siml<64, 64>(mtrx.A_64, mtrx.B_64, mtrx.C_64);
-                            std::cout <<"Simple\t64x64 " << tmr.format();
+                            mtrx.A_64*mtrx.B_64;
+                            std::cout <<"Simple C\t64x64 " << tmr.format();
                         }
                         cv.notify_all();
                     }
@@ -185,8 +185,8 @@ public:
                             mtrx.A_128.init_list(*vec_128);
                             mtrx.B_128.init_list(*vec_128);
 
-                            mult_siml<128, 128>(mtrx.A_128, mtrx.B_128, mtrx.C_128);
-                            std::cout <<"Simple\t128x128 " << tmr.format();
+                            mtrx.A_128*mtrx.B_128;
+                            std::cout <<"Simple C\t128x128 " << tmr.format();
                         }
                         cv.notify_all();
                     }
@@ -211,8 +211,8 @@ public:
                         mtrx.A_8.init_list(*vec_8);
                         mtrx.B_8.init_list(*vec_8);
 
-                        mult_siml<8, 8>(mtrx.A_8, mtrx.B_8, mtrx.C_8);
-                        std::cout <<"Simple\t8x8 " << tmr.format();
+                        mtrx.A_8*mtrx.B_8;
+                        std::cout <<"Simple C(Async)\t8x8 " << tmr.format();
                     }
      else if(i == 1){
                   matrix mtrx;
@@ -225,8 +225,8 @@ public:
                         mtrx.A_16.init_list(*vec_16);
                         mtrx.B_16.init_list(*vec_16);
 
-                        mult_siml<16, 16>(mtrx.A_16, mtrx.B_16, mtrx.C_16);
-                        std::cout <<"Simple\t16x16 " << tmr.format();
+                        mtrx.A_16*mtrx.B_16;
+                        std::cout <<"Simple C(Async)\t16x16 " << tmr.format();
                     }
      else if(i == 2){
                   matrix mtrx;
@@ -239,7 +239,7 @@ public:
                         mtrx.A_32.init_list(*vec_32);
                         mtrx.B_32.init_list(*vec_32);
 
-                        mult_siml<32, 32>(mtrx.A_32, mtrx.B_32, mtrx.C_32);
+                        mtrx.A_32*mtrx.B_32;
                         std::cout <<"Simple\t32x32 " << tmr.format();
                     }
      else if(i == 3){
@@ -253,8 +253,8 @@ public:
                         mtrx.A_64.init_list(*vec_64);
                         mtrx.B_64.init_list(*vec_64);
 
-                        mult_siml<64, 64>(mtrx.A_64, mtrx.B_64, mtrx.C_64);
-                        std::cout <<"Simple\t64x64 " << tmr.format();
+                        mtrx.A_64*mtrx.B_64;
+                        std::cout <<"Simple C(Async)\t64x64 " << tmr.format();
                     }
      else if(i == 4){
                   matrix mtrx;
@@ -267,53 +267,53 @@ public:
                         mtrx.A_128.init_list(*vec_128);
                         mtrx.B_128.init_list(*vec_128);
 
-                        mult_siml<128, 128>(mtrx.A_128, mtrx.B_128, mtrx.C_128);
+                        mtrx.A_128*mtrx.B_128;
                         std::cout <<"Simple\t128x128 " << tmr.format();
                     }
 
           ////////////////META
-//     else if(i == 5){
-//                  matrix mtrx;
-//                        auto vec_8 = std::make_unique<std::vector<size_t>>();
-//                        for (size_t i = 0; i < 8*8; i++)
-//                            {
-//                                vec_8->push_back(dist(gen));
-//                            }
-//                        boost::timer::cpu_timer tmr;
-//                        mtrx.A_8.init_list(*vec_8);
-//                        mtrx.B_8.init_list(*vec_8);
+     else if(i == 5){
+                  matrix mtrx;
+                        auto vec_8 = std::make_unique<std::vector<size_t>>();
+                        for (size_t i = 0; i < 8*8; i++)
+                            {
+                                vec_8->push_back(dist(gen));
+                            }
+                        boost::timer::cpu_timer tmr;
+                        mtrx.A_8.init_list(*vec_8);
+                        mtrx.B_8.init_list(*vec_8);
 
-//                        mult_meta<8, 8>(mtrx.A_8, mtrx.B_8, mtrx.C_8);
-//                        std::cout <<"Meta\t8x8 " << tmr.format();
-//                    }
-//     else if(i == 6){
-//                  matrix mtrx;
-//                        auto vec_16 = std::make_unique<std::vector<size_t>>();
-//                        for (size_t i = 0; i < 16*16; i++)
-//                            {
-//                                vec_16->push_back(dist(gen));
-//                            }
-//                        boost::timer::cpu_timer tmr;
-//                        mtrx.A_16.init_list(*vec_16);
-//                        mtrx.B_16.init_list(*vec_16);
+                        mult_meta<8, 8>(mtrx.A_8, mtrx.B_8, mtrx.C_8);
+                        std::cout <<"Meta C++(Async)\t8x8 " << tmr.format();
+                    }
+     else if(i == 6){
+                  matrix mtrx;
+                        auto vec_16 = std::make_unique<std::vector<size_t>>();
+                        for (size_t i = 0; i < 16*16; i++)
+                            {
+                                vec_16->push_back(dist(gen));
+                            }
+                        boost::timer::cpu_timer tmr;
+                        mtrx.A_16.init_list(*vec_16);
+                        mtrx.B_16.init_list(*vec_16);
 
-//                        mult_meta<16, 16>(mtrx.A_16, mtrx.B_16, mtrx.C_16);
-//                        std::cout <<"Meta\t16x16 " << tmr.format();
-//                    }
-//     else if(i == 7){
-//                  matrix mtrx;
-//                        auto vec_32 = std::make_unique<std::vector<size_t>>();
-//                        for (size_t i = 0; i < 32*32; i++)
-//                            {
-//                                vec_32->push_back(dist(gen));
-//                            }
-//                        boost::timer::cpu_timer tmr;
-//                        mtrx.A_32.init_list(*vec_32);
-//                        mtrx.B_32.init_list(*vec_32);
+                        mult_meta<16, 16>(mtrx.A_16, mtrx.B_16, mtrx.C_16);
+                        std::cout <<"Meta C++(Async)\t16x16 " << tmr.format();
+                    }
+     else if(i == 7){
+                  matrix mtrx;
+                        auto vec_32 = std::make_unique<std::vector<size_t>>();
+                        for (size_t i = 0; i < 32*32; i++)
+                            {
+                                vec_32->push_back(dist(gen));
+                            }
+                        boost::timer::cpu_timer tmr;
+                        mtrx.A_32.init_list(*vec_32);
+                        mtrx.B_32.init_list(*vec_32);
 
-//                        mult_meta<32, 32>(mtrx.A_32, mtrx.B_32, mtrx.C_32);
-//                        std::cout <<"Meta\t32x32 " << tmr.format();
-//                    }
+                        mult_meta<32, 32>(mtrx.A_32, mtrx.B_32, mtrx.C_32);
+                        std::cout <<"Meta C++(Async)\t32x32 " << tmr.format();
+                    }
 //     else if(i == 8){
 //                  matrix mtrx;
 //                        auto vec_64 = std::make_unique<std::vector<size_t>>();

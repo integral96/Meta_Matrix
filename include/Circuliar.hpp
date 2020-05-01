@@ -1,6 +1,5 @@
 #pragma once
 
-#include <matrix_mult.hpp>
 #include <boost/array.hpp>
 #include <boost/thread.hpp>
 

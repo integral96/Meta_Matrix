@@ -17,7 +17,6 @@
 #include <complex>
 
 #include <array2d.hpp>
-#include <matrix_mult.hpp>
 
 template <size_t N = 3, size_t M = 3>
     using my_matrix = array2d<size_t, N, M, std::vector>;

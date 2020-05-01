@@ -1,6 +1,9 @@
 #pragma once
 
 #include <iostream>
+#include <utility>
+#include <functional>
+
 #include <vector>
 
 #include <boost/container/vector.hpp>
@@ -68,3 +71,8 @@ public:
         std::cout << transposed_view<array2d<T, N + 1, M + 1, boost::container::vector>>(matx_u) << std::endl;
     }
 };
+
+template<typename Callable, typename ...Args>
+decltype (auto) call(Callable callback, Args&& ... args) {
+    return std::invoke(std::forward<Callable>(callback), std::forward<Args>(args)...);
+}
