@@ -7,14 +7,14 @@ set(SOURCES
     main.cpp)
 set(HEADERS
     include/array2d.hpp
-    include/matrix_mult.hpp
+    include/function_compose.hpp
     include/matrix_initialised.hpp
     include/graph.hpp
     include/wave_equation.hpp
     include/Circuliar.hpp)
 
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/build)
-#set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ftemplate-depth=4800")
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ftemplate-depth=4800")
 
 include_directories(include)
 

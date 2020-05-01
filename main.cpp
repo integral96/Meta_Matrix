@@ -21,7 +21,7 @@ static auto handler([](int x) {
 int main() {
     multyplyMatrix mtrx;
     mtrx.print_result_thread();
-//    mtrx.print_result_async();
+    mtrx.print_result_async();
     std::vector<int> vec{2, 2, 2, 2, 2};
 
     std::complex<char> cmpl1('W', 'Q');
@@ -48,6 +48,6 @@ int main() {
     array2d<size_t, 5, 5, std::vector>   A_5;
     A_5.fill(2);
     std::cout << trans(A_5) << std::endl;
-
+    std::cout << call(handler, 6) << std::endl;
 	return 0;
 }
