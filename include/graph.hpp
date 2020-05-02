@@ -17,21 +17,11 @@
 #include <complex>
 
 #include <array2d.hpp>
+#include <Circuliar.hpp>
 
 template <size_t N = 3, size_t M = 3>
     using my_matrix = array2d<size_t, N, M, std::vector>;
 
-template<typename T>
-struct Magnitude
-{
-    using type = T;
-};
-
-template<typename T>
-struct Magnitude<std::complex<T>>
-{
-    using type = T;
-};
 
 template<typename Vertex, typename Weight>
 struct node_type

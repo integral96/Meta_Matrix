@@ -30,7 +30,7 @@ public:
                 matx_u(i, j + 1) = matx_u(i - 1, j) + matx_u(i + 1, j) - matx_u(i, j - 1);
             }
         }
-        std::cout << transposed_view<array2d<T, N + 1, M + 1, boost::container::vector>>(matx_u) << typeid (trans(matx_u)).name() << std::endl;
+        std::cout << trans(matx_u) << typeid (trans(matx_u)).name() << std::endl;
     }
 };
 
