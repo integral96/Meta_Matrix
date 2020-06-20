@@ -6,6 +6,7 @@
 #include <boost/type_traits/is_constructible.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/shared_array.hpp>
+#include <boost/type_traits.hpp>
 
 #include <initializer_list>
 #include <vector>
@@ -145,7 +146,9 @@ array2d<T, R, C, Cont>& array2d<T, R, C, Cont>::operator = (const array2d<T, R, 
         this->arr = other.arr;
     return *this;
 }
-
+/*!
+ *  Перегрузка оператора умножения на матрицу.
+ */
 template<typename T, size_t R, size_t C, template<typename> class Cont>
 array2d<T, R, C, Cont>& array2d<T, R, C, Cont>::operator * (const array2d<T, R, C, Cont>& A) {
     size_t Rang1 = A.size(1);
@@ -164,6 +167,10 @@ array2d<T, R, C, Cont>& array2d<T, R, C, Cont>::operator * (const array2d<T, R, 
 
     return *this;
 }
+
+/*!
+ *  Перегрузка оператора умножения на вектор.
+ */
 template<typename T, size_t R, size_t C, template<typename> class Cont>
 array2d<T, R, C, Cont>& array2d<T, R, C, Cont>::operator * (const std::vector<T>& Vec) {
     assert(Vec.size() == R || Vec.size() == C);
@@ -180,7 +187,9 @@ array2d<T, R, C, Cont>& array2d<T, R, C, Cont>::operator * (const std::vector<T>
 
     return *this;
 }
-
+/*!
+ *  умножение двух матриц, классический способ.
+ */
 template<typename T, size_t R, size_t C, template<typename> class Cont>
 array2d<T, R, C, Cont>& array2d<T, R, C, Cont>::multy(const array2d<T, R, C, Cont>& A, const array2d<T, R, C, Cont>& B) {
     assert(A.size(1) == B.size(2));
@@ -201,7 +210,9 @@ array2d<T, R, C, Cont>& array2d<T, R, C, Cont>::multy(const array2d<T, R, C, Con
     return *this;
 }
 
-///meta mult
+/*!
+ *  Умножение матриц методом метапрограммирования. Метод 1
+ */
 
 template<size_t K, typename T>
 struct multi_tmp
@@ -223,71 +234,72 @@ struct multi_tmp<0, T>
 template<size_t Index1, size_t MaxIndex1, size_t Index2, size_t MaxIndex2>
 struct loopback
 {
-    static constexpr size_t next_index1 = Index1;
-    static constexpr size_t next_index2 = Index2 + 1;
+    static constexpr size_t next_I = Index1;
+    static constexpr size_t next_J = Index2 + 1;
 };
 template<size_t Index1, size_t MaxIndex1, size_t MaxIndex2>
 struct loopback<Index1, MaxIndex1, MaxIndex2, MaxIndex2>
 {
-    static constexpr size_t next_index1 = Index1 + 1;
-    static constexpr size_t next_index2 = 0;
+    static constexpr size_t next_I = Index1 + 1;
+    static constexpr size_t next_J = 0;
 };
+////////////////////
 ///////////////////////////
-template<size_t Index1, size_t MaxIndex1, size_t Index2, size_t MaxIndex2>
+template<size_t I, size_t N, size_t J, size_t M>
 struct mult_block
 {
-    using loop = loopback<Index1, MaxIndex1, Index2, MaxIndex2>;
-    using next = mult_block<loop::next_index1, MaxIndex1, loop::next_index2, MaxIndex2>;
+    typedef  loopback<I, N, J, M> loop;
+    typedef  mult_block<loop::next_I, N, loop::next_J, M> next;
 
     template<typename T, typename Matrix>
     void operator()(T& tmp, const Matrix& A, const Matrix& B, size_t i, size_t k, size_t j) {
-        tmp.value += A(i + Index1, k) * B(k, j + Index2);
+        tmp.value += A(i + I, k) * B(k, j + J);
         next()(tmp.sub, A, B, i, k, j);
     }
 
     template<typename T, typename Matrix>
     void update(const T& tmp, Matrix& C, size_t i, size_t j) {
-        C(i + Index1, j + Index2) = tmp.value;
+        C(i + I, j + J) = tmp.value;
         next().update(tmp.sub, C, i, j);
     }
 };
 
-template<size_t Index1, size_t MaxIndex1, size_t MaxIndex2>
-struct mult_block<Index1, MaxIndex1, MaxIndex2, MaxIndex2>
+template<size_t I, size_t N, size_t M>
+struct mult_block<I, N, M, M>
 {
-    using next = mult_block<Index1 + 1, MaxIndex1, 0, MaxIndex2>;
+    typedef  mult_block<I + 1, N, 0, M> next;
 
     template<typename T, typename Matrix>
     void operator()(T& tmp, const Matrix& A, const Matrix& B, size_t i, size_t k, size_t j) {
-        tmp.value += A(i + Index1, k) * B(k, j + MaxIndex2);
+        tmp.value += A(i + I, k) * B(k, j + M);
         next()(tmp.sub, A, B, i, k, j);
     }
 
     template<typename T, typename Matrix>
     void update(const T& tmp, Matrix& C, size_t i, size_t j) {
-        C(i + Index1, j + MaxIndex2) = tmp.value;
+        C(i + I, j + M) = tmp.value;
         next().update(tmp.sub, C, i, j);
     }
 };
 
-template<size_t MaxIndex1, size_t MaxIndex2>
-struct mult_block<MaxIndex1, MaxIndex1, MaxIndex2, MaxIndex2>
+template<size_t N, size_t M>
+struct mult_block<N, N, M, M>
 {
     template<typename T, typename Matrix>
     void operator()(T& tmp, const Matrix& A, const Matrix& B, size_t i, size_t k, size_t j) {
-        tmp.value += A(i + MaxIndex1, k) * B(k, j + MaxIndex2);
+        tmp.value += A(i + N, k) * B(k, j + M);
     }
 
     template<typename T, typename Matrix>
     void update(const T& tmp, Matrix& C, size_t i, size_t j) {
-        C(i + MaxIndex1, j + MaxIndex2) = tmp.value;
+        C(i + N, j + M) = tmp.value;
     }
 };
 
 template<size_t N, size_t M, typename Matrix>
 void mult_meta(const Matrix& A, const Matrix& B, Matrix& C) {
     assert(A.size(1) == B.size(2));
-    using value_type = typename Matrix::value_type;
+    typedef typename Matrix::value_type value_type;
     size_t Rang = A.size(1);
     mult_block<0, N - 1, 0, M - 1> block;
     for (size_t i = 0; i < Rang; i += N)
@@ -302,4 +314,104 @@ void mult_meta(const Matrix& A, const Matrix& B, Matrix& C) {
             block.update(tmp, C, i, j);
         }
     }
+}
+/*!
+ *  Умножение матриц методом метапрограммирования. Метод 2
+ */
+
+template <size_t N, size_t I, class Closure>
+typename boost::enable_if_t<(I == N)> is_meta_loop2(Closure& closure) {}
+
+template <size_t N, size_t I, class Closure>
+typename boost::enable_if_t<(I < N)> is_meta_loop2(Closure& closure) {
+    closure.template apply<I>();
+    is_meta_loop2<N, I + 1>(closure);
+}
+template <size_t N, class Closure>
+void meta_loop2(Closure& closure) {
+    is_meta_loop2<N, 0>(closure);
+}
+
+/*!
+ * struct abstract_sum
+ */
+template <size_t N, size_t M, typename Matrix_cls>
+struct abstr_sum_matrix
+{
+    typedef typename Matrix_cls::value_type value_type;
+    Matrix_cls matrix_cls;
+    value_type result;
+    abstr_sum_matrix(Matrix_cls& mtrx) : matrix_cls(mtrx), result(value_type()) {}
+
+    template<size_t K>
+    void apply() {
+        result += matrix_cls.template value<K>();
+    }
+};
+template <size_t N, size_t M, class Matrix_cls>
+typename Matrix_cls::value_type abstr_sum(Matrix_cls& matrix_cls) {
+    abstr_sum_matrix<N, M, Matrix_cls> my_closure(matrix_cls);
+    meta_loop2<N>(my_closure);
+    return my_closure.result;
+}
+
+template <size_t N, size_t M, typename Matrix>
+struct matrix_prod_closure
+{
+    typedef typename Matrix::value_type value_type;
+private:
+    Matrix A, B;
+public:
+    matrix_prod_closure(const Matrix& A, const Matrix& B) : A(A), B(B) {}
+    template<size_t K>
+    value_type value() const {
+        return A(N, K) * B(K, M);
+    }
+};
+
+template <typename Matrix>
+struct result_matrx {
+    typedef typename Matrix::value_type value_type;
+    Matrix A, B;
+    result_matrx(Matrix& A, Matrix& B): A(A), B(B) {}
+    template <size_t N, size_t M>
+    value_type value() const {
+        matrix_prod_closure<N, M, Matrix> closure(A, B);
+        return abstr_sum<N, M>(closure);
+    }
+};
+
+template <size_t i, typename Matrix>
+struct A_m
+{
+private:
+    Matrix C, A, B;
+
+public:
+    A_m(Matrix& C, const Matrix& A, const Matrix& B): C(C), A(A), B(B){}
+
+    template <size_t j>
+    void apply() {
+        result_matrx<Matrix> a(A, B);
+        C(i, j) = a.template value<i, j>();
+    }
+};
+template <typename Matrix>
+struct CALC_A
+{
+private:
+    Matrix C, A, B;
+public:
+    CALC_A(Matrix& C, const Matrix& A, const Matrix& B): C(C), A(A), B(B){}
+
+    template <size_t i>
+    void apply() {
+        A_m<i, Matrix> closure(C, A, B);
+        meta_loop2<i + 1>(closure);
+    }
+};
+template <size_t M, typename Matrix>
+void calc_matrix(Matrix& C, const Matrix& A, const Matrix& B) {
+    CALC_A<Matrix> closure(C, A, B);
+    meta_loop2<M + 1>(closure);
 }

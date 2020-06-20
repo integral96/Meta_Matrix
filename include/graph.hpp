@@ -122,7 +122,7 @@ class Graph
             {
                 if(y.start != y.finish) strm << y.start << " => " << y.finish << ", weight = " << y.weight << std::endl;
             }
-            strm << adjacency_matrix << std::endl;
+//            strm << adjacency_matrix << std::endl;
         }
 
         friend std::ostream& operator << <Vertex, Weight, N, M> (std::ostream& ost, Graph<Vertex, Weight, N, M> const& grp);

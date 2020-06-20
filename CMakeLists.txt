@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 3.12)
 
 # Set options for this project.
-project(wip_graph ${PROJECT_NAME})
+project(meta_matrix ${PROJECT_NAME})
 
 set(SOURCES
     main.cpp)
@@ -14,7 +14,7 @@ set(HEADERS
     include/Circuliar.hpp)
 
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/build)
-#set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ftemplate-depth=4800")
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ftemplate-depth=24800")
 
 include_directories(include)
 
