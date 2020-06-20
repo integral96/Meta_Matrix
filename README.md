@@ -1,0 +1,23 @@
+# Meta_Matrix
+Данная программа использует шаблонный класс матриц и использует его для расчета времени умножения матриц заполненых случайным образомприменяются методы умножения как классические так и метопрограммирования, а так-же сравнивается с классом  boost::numeric::ublas::matrix .Так же заполняем графы с помощью этого шаблонного класса матриц и вычисляем норму.
+Расчет времени умножения матриц в рантайме и времени компиляции: 
+Simple C(8x8)		 0.000160s wall, 0.000000s user + 0.000000s system = 0.000000s CPU (n/a%)
+Simple C(16x16)		 0.001445s wall, 0.000000s user + 0.000000s system = 0.000000s CPU (n/a%)
+Simple C(32x32)		 0.015764s wall, 0.020000s user + 0.000000s system = 0.020000s CPU (126.9%)
+Simple C(64x64)		 0.220418s wall, 0.220000s user + 0.000000s system = 0.220000s CPU (99.8%)
+Simple C(128x128)		 3.400104s wall, 3.400000s user + 0.000000s system = 3.400000s CPU (100.0%)
+Meta C++(Метод 2)8x8	 0.000220s wall, 0.000000s user + 0.000000s system = 0.000000s CPU (n/a%)
+Meta C++(Метод 2)16x16	 0.000858s wall, 0.010000s user + 0.000000s system = 0.010000s CPU (n/a%)
+Meta C++(Метод 2)32x32	 0.006961s wall, 0.090000s user + 0.000000s system = 0.090000s CPU (1293.0%)
+Meta C++(Метод 2)64x64	 0.040786s wall, 0.480000s user + 0.000000s system = 0.480000s CPU (1176.9%)
+Meta C++(Метод 2)128x128	 0.655285s wall, 7.220000s user + 0.010000s system = 7.230000s CPU (1103.3%)
+Simple(async) C(16x16)		 0.001718s wall, 0.010000s user + 0.000000s system = 0.010000s CPU (582.2%)
+Simple(async) C(32x32)		 0.018198s wall, 0.160000s user + 0.000000s system = 0.160000s CPU (879.2%)
+Meta C++(Метод 1)8x8	 0.000129s wall, 0.000000s user + 0.000000s system = 0.000000s CPU (n/a%)
+Meta C++(Метод 1)16x16	 0.000824s wall, 0.010000s user + 0.000000s system = 0.010000s CPU (n/a%)
+Meta C++(Метод 1)32x32	 0.008639s wall, 0.060000s user + 0.000000s system = 0.060000s CPU (694.5%)
+Simple(async) C(8x8)		 0.000225s wall, 0.000000s user + 0.000000s system = 0.000000s CPU (n/a%)
+Meta C++(Метод 1)64x64	 0.101934s wall, 0.570000s user + 0.010000s system = 0.580000s CPU (569.0%)
+Simple(async) C(64x64)		 0.275009s wall, 0.990000s user + 0.010000s system = 1.000000s CPU (363.6%)
+Meta C++(Метод 1)128x128	 1.283065s wall, 4.900000s user + 0.010000s system = 4.910000s CPU (382.7%)
+Simple(async) C(128x128)		 3.548053s wall, 5.210000s user + 0.010000s system = 5.220000s CPU (147.1%)
